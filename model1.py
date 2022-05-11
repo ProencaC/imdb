@@ -203,34 +203,6 @@ for d,m in models.items():
 #%%
 #otimizando/tunando os modelos de Random forest e XGBoost utilizando o gridsearch
 
-#%%
-y_train_pred = rf_pipe.predict(X_train)
-
-mse = metrics.mean_squared_error(y_train,y_train_pred)
-rmse = math.sqrt(mse)
-r2 = metrics.r2_score(y_train,y_train_pred)
-print("treino mse:", mse)
-print("treino rmse:", rmse)
-print("treino R2:", r2)
-
-
-
-
-
-
-#%%
-#Testando na base de teste
-y_test_pred = rf_pipe.predict(X_test)
-
-mse = metrics.mean_squared_error(y_test,y_test_pred)
-rmse = math.sqrt(mse)
-r2 = metrics.r2_score(y_test,y_test_pred)
-print("teste mse:", mse)
-print("teste rmse:", rmse)
-print("treino R2:", r2)
-
-
-#%%
 
 
 
