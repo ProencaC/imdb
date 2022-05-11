@@ -22,6 +22,8 @@ from feature_engine import imputation
 from feature_engine import encoding
 from feature_engine import outliers
 
+from scipy.stats import jarque_bera
+
 print("ok...")
 #%%
 print("Carregando ABT")
@@ -190,3 +192,14 @@ plt.scatter(df.ano_estreia,df.rating)
 #Não parece haver relação
 
 plt.scatter(df.tempo_duracao,df.rating)
+
+
+#%%
+plt.hist(df.rating)
+
+
+#%%
+jarque_bera(df.rating)
+#Não temos uma normal, logo para aplicar regressão linear precisariamos
+#fazer uma transformação nos dados.
+
