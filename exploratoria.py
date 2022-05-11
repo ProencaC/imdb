@@ -38,7 +38,6 @@ print(df.head())
 print("ok...")
 
 
-
 #%%
 print("Separando base oot, base para treino e base para teste")
 #Nosso back-test
@@ -110,26 +109,6 @@ print(is_na[is_na>0])
 #(filme TV ou filme)
 #Assim ficamos com 213.348 linhas
 
-#%%
-missing1 = ["ano_estreia",
-            "numero_titulos"]
-missingmedian = ['tempo_duracao'] #Vou usar a mediana ao inves da media pois temos valores muito extremos no tempo de duração
-
-outlier_remove = ["tempo_duracao"]
-
-# %%
-
-# MODIFY - modificando os valores nulos
-
-## imputação de dados
-imput_1 = imputation.ArbitraryNumberImputer(arbitrary_number=-1, variables=missing1)
-imput_median = imputation.MeanMedianImputer(imputation_method = "median",variables = missingmedian)
-remove_out = outliers.ArbitraryOutlierCapper(max_capping_dict={'tempo_duracao': 360}, min_capping_dict={'num_votos':50}, missing_values='ignore')
-
-#Tratamento outliers
-#definindo o limite de tempo do filme em 6 horas ou 360 minutos
-
-#%%
 
 
 
@@ -144,20 +123,41 @@ plt2 = sns.histplot(x = df.is_adult)
 #O que é filme adulto?
 
 #%%
-plt3 = sns.histplot(x = df.ano_estreia)
-#nota-se uma crescente em relação ao numero de filmes produzidos, que teve uma queda no ano de 2020
-#provavelmente devido a pandemia.
+plt3 = sns.histplot(x = "ano_estreia",data = df)
+plt3.set_xlabel("Ano de estreia")
+plt3.set_ylabel("Quantidade de filmes")
+plt3.set_title("Histograma dos filmes lançados por ano")
+
+#nota-se uma crescente em relação ao numero de filmes produzidos com o avançar dos anos,
+#que teve uma queda no ano de 2020 provavelmente devido a pandemia.
 
 
 #%%
-plt4 = sns.histplot(x = df.tempo_duracao[df.tempo_duracao< 500])
-
-
-#%%
-plt5 = sns.boxplot(x = df.tempo_duracao)
-#notamos um filme com 51420 minutos, trata-se de um outlier, porem não é um erro,
+plt4 = plt.hist(x = df.tempo_duracao)
+plt.xlabel("Tempo de duração")
+plt.ylabel("Quantidade")
+plt.title("Histograma do tempo de duração dos filmes")
+df.tempo_duracao.describe()
+#notamos que pelo menos metade dos filmes estão entre 80 e 100 minutos
+#(antigo)notamos um filme com 51420 minutos, trata-se de um outlier, porem não é um erro,
 #realmente existe um filme com 857 horas. Porem que sera descartado da nossa análise
 #pois não é nosso objetivo prever a nota de um caso tão extremo. Buscamos a generalização do modelo.
+
+
+#%%
+plt5 = sns.histplot(x = "rating", data = df)
+plt5.set_xlabel("Notas")
+plt5.set_ylabel("Quantidade")
+plt5.set_title("Histograma das notas")
+
+
+#%%
+plt6 = plt.hist(x = "num_votos", data = df,bins=20)
+plt.xlabel("numero votos")
+plt.ylabel("Quantidade")
+plt.title("Histograma da quantidade de votos")
+#Outliers não deixam visualizar os outros valores :(
+
 
 
 #%%
