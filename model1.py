@@ -4,6 +4,7 @@ print ('importando pacotes')
 #from asyncio.windows_utils import pipe
 import sqlite3
 import math
+from statistics import mean
 #import pycountry
 
 #import numpy as np
@@ -42,7 +43,8 @@ df = pd.read_sql_query(consulta, conn)
 print(df.shape)
 
 print("ok...")
-
+#%%
+df.tempo_duracao.describe()
 # %%
 
 print("Separando base oot, base para treino e base para teste")
@@ -124,7 +126,7 @@ print("ok...")
 
 #%%
 #MODEL
-rf_rgs = ensemble.RandomForestRegressor(n_estimators=150,
+rf_rgs = ensemble.RandomForestRegressor(n_estimators=80,
                                         min_samples_leaf=20,
                                         random_state=42)
 
@@ -183,9 +185,9 @@ def train_test_report(model, X_train, ytrain, X_test, y_test, key_metric):
 
 #%%
 
-for d,m in models.items():
-    result = train_test_report(m,X_train, y_train, X_test, y_test, metrics.r2_score)
-    print(f"{d}: {result}")
+#for d,m in models.items():
+#    result = train_test_report(m,X_train, y_train, X_test, y_test, metrics.r2_score)
+#    print(f"{d}: {result}")
 
 
 #Primeiros resultados
@@ -202,7 +204,56 @@ for d,m in models.items():
 
 #%%
 #otimizando/tunando os modelos de Random forest e XGBoost utilizando o gridsearch
+#Primeiro o random forest
+params = {"n_estimators":[50,100,150,200],
+          "min_samples_leaf":[5,10,20,50]}
+
+grid_search = model_selection.GridSearchCV(rf_rgs,
+                                           params,
+                                           n_jobs=1,
+                                           cv = 4,
+                                           scoring="r2",
+                                           #verbose=2,
+                                           return_train_score=True,
+                                           refit=True)
+
+rf_pipe = pipeline.Pipeline(steps=[ ("Imput -1", imput_1),
+                                      ("Imput mediana", imput_median),
+                                      ("Modelo", grid_search)] )
+
+#%%
+rf_pipe.fit(X_train,y_train)
+#Fitting 5 folds for each of 16 candidates, totalling 80 fits
 
 
 
+#%%
+rf_pipe.get_params()
 
+#%%
+y_train_pred = rf_pipe.predict(X_train)
+
+mse = metrics.mean_squared_error(y_train,y_train_pred)
+rmse = math.sqrt(mse)
+R2 = metrics.r2_score(y_train,y_train_pred)
+
+print("mse:",mse)
+print("rmse:",rmse)
+print("R2:",R2)
+
+
+
+#%%
+#Testando na base de teste
+y_test_pred = rf_pipe.predict(X_test)
+
+mse_t = metrics.mean_squared_error(y_test,y_test_pred)
+rmse_t = math.sqrt(mse)
+R2_t = metrics.r2_score(y_test,y_test_pred)
+
+print("mse:",mse_t)
+print("rmse:",rmse_t)
+print("R2:",R2_t)
+
+
+#Agora o XGB
