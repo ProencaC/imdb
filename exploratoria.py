@@ -2,7 +2,7 @@
 print ('importando pacotes')
 import time
 import sqlite3
-import pycountry
+#import pycountry
 
 import numpy as np
 import pandas as pd
@@ -152,7 +152,7 @@ plt5.set_title("Histograma das notas")
 
 
 #%%
-plt6 = plt.hist(x = "num_votos", data = df,bins=20)
+plt6 = plt.bar (x = "num_votos", data = df,bins=20)
 plt.xlabel("numero votos")
 plt.ylabel("Quantidade")
 plt.title("Histograma da quantidade de votos")
@@ -199,7 +199,11 @@ plt.hist(df.rating)
 
 
 #%%
-jarque_bera(df.rating)
+#Salvando dados em csv 
+
+
+
 #Não temos uma normal, logo para aplicar regressão linear precisariamos
 #fazer uma transformação nos dados.
 
+# nota <5 nota 5 e 8 médio nota > 8 muito pia
